@@ -9,7 +9,7 @@ interface Props {
 export default function Product({ product }: Props) {
     return (
         <Card>
-            <CardMedia sx={{ height: 140, backgroundSize: "contain" }} image={`http://localhost:5267/images/${product.imageUrl}`} />
+            <CardMedia component={Link} to={`/catalog/${product.id}`} sx={{ height: 140, backgroundSize: "contain" }} image={`http://localhost:5267/images/${product.imageUrl}`} />
             <CardContent sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                 <Typography gutterBottom variant="h6" color="text.secondary">
                     {product.name}
