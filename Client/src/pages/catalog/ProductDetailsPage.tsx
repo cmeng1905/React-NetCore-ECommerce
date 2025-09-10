@@ -37,7 +37,7 @@ export default function ProductDetailsPage() {
                 <Grid size={{ xl: 9, lg: 9, md: 7, sm: 6, xs: 12 }}>
                     <Typography variant="h3">{product.name}</Typography>
                     <Divider sx={{ mb: 2 }} />
-                    <Typography variant="h4" color="secondary"> {(product.price / 100).toFixed(2)} ₺</Typography>
+                    <Typography variant="h4" color="secondary"> {product.price.toFixed(2)} ₺</Typography>
                     <TableContainer>
                         <Table>
                             <TableBody>

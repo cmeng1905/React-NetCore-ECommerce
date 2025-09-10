@@ -8,6 +8,7 @@ import ProductDetailsPage from "../pages/catalog/ProductDetailsPage";
 import ErrorPage from "../pages/ErrorPage";
 import ServerError from "../errors/ServerError";
 import NotFound from "../errors/NotFound";
+import ShoppingCartPage from "../pages/cart/ShoppingCartPage";
 
 export const router = createBrowserRouter([
     {
@@ -45,6 +46,10 @@ export const router = createBrowserRouter([
             {
                 path: "catalog/:id",
                 element: <ProductDetailsPage />
+            },
+            {
+                path: "cart",
+                element: <ShoppingCartPage />
             },
             {
                 path: "*",
