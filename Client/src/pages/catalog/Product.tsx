@@ -5,19 +5,23 @@ import SearchIcon from '@mui/icons-material/Search';
 import { Link } from "react-router";
 import { useState } from "react";
 import requests from "../../api/request";
+import { toast } from "react-toastify";
+import { useCartContext } from "../../context/CartContext";
 interface Props {
     product: IProduct
 }
 export default function Product({ product }: Props) {
     const [loading, setLoading] = useState(false);
+    const { setCart } = useCartContext();
     function handleAddItem(productId: number) {
         setLoading(true);
         requests.Cart.addItem(productId)
             .then((cart) => {
-                console.log(cart)
+                toast.success("Item added to cart");
+                setCart(cart);
             })
             .catch((err) => {
-                console.log(err)
+                toast.error("Error adding item to cart");
             }).finally(() => {
                 setLoading(false);
             });
