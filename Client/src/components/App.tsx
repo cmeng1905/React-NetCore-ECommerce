@@ -2,10 +2,9 @@ import Header from "./Header";
 import { CircularProgress, Container, CssBaseline, Stack } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import requests from "../api/request";
 import { useCartContext } from "../context/CartContext";
-// import 'react-toastify/dist/ReactToastify.css'
 
 function App() {
   const { setCart } = useCartContext();
@@ -16,7 +15,7 @@ function App() {
         setCart(cart);
       })
       .catch((err) => {
-        console.error(err);
+        toast.error("Sepet bilgisine ulaşılamadı.");
       }).finally(() => {
         setLoading(false);
       });

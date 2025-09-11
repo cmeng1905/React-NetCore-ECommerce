@@ -1,5 +1,5 @@
-import { Alert, Button, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import { AddCircleOutline, Delete, RemoveCircleOutline } from "@mui/icons-material";
+import { Alert, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { AddCircleOutline, RemoveCircleOutline } from "@mui/icons-material";
 import { useCartContext } from "../../context/CartContext";
 import { useState } from "react";
 import requests from "../../api/request";
@@ -22,7 +22,7 @@ export default function ShoppingCartPage() {
             .finally(() => setStatus({ loading: false, id: "" }));
     }
 
-    if (cart?.cartItems.length === 0)
+    if (cart == null || cart?.cartItems.length === 0)
         return (<Alert severity="error">Cart is empty</Alert>)
     return (
         <TableContainer component={Paper}>

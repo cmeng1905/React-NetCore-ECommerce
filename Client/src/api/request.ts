@@ -9,7 +9,8 @@ axios.interceptors.response.use(response => {
     return response;
 }, (error: AxiosError) => {
     if (!error.response) {
-        toast.error("Unknown error");
+        toast.error("Server Error");
+        return
     }
     const { data, status } = error.response as AxiosResponse;
     switch (status) {
