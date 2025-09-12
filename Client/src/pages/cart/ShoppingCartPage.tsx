@@ -3,6 +3,9 @@ import { AddCircleOutline, RemoveCircleOutline } from "@mui/icons-material";
 import { useCartContext } from "../../context/CartContext";
 import { useState } from "react";
 import requests from "../../api/request";
+import { toast } from "react-toastify";
+import CartSummary from "./CartSummary";
+import { currencyTRY } from "../../utils/formatCurrency";
 
 export default function ShoppingCartPage() {
     const { cart, setCart } = useCartContext();
@@ -10,15 +13,21 @@ export default function ShoppingCartPage() {
     function handleAddItem(productId: number, id: string) {
         setStatus({ loading: true, id: id });
         requests.Cart.addItem(productId)
-            .then((cart) => setCart(cart))
-            .catch((err) => console.log(err))
+            .then((cart) => {
+                setCart(cart);
+                toast.success("Item added to cart");
+            })
+            .catch(() => toast.error("Error adding item to cart"))
             .finally(() => setStatus({ loading: false, id: "" }));
     }
     function handleDeleteItem(productId: number, id: string, quantity = 1) {
         setStatus({ loading: true, id: id });
         requests.Cart.deleteItem(productId, quantity)
-            .then((cart) => setCart(cart))
-            .catch((err) => console.log(err))
+            .then((cart) => {
+                setCart(cart);
+                toast.success("Item removed from cart");
+            })
+            .catch(() => toast.error("Error removing item from cart"))
             .finally(() => setStatus({ loading: false, id: "" }));
     }
 
@@ -29,12 +38,12 @@ export default function ShoppingCartPage() {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                 <TableHead>
                     <TableRow>
-                        <TableCell></TableCell>
-                        <TableCell></TableCell>
-                        <TableCell align="right">Fiyat</TableCell>
-                        <TableCell align="right">Adet</TableCell>
-                        <TableCell align="right">Toplam</TableCell>
-                        <TableCell align="right"></TableCell>
+                        <TableCell align="center"></TableCell>
+                        <TableCell align="center"></TableCell>
+                        <TableCell align="center">Fiyat</TableCell>
+                        <TableCell align="center">Adet</TableCell>
+                        <TableCell align="center">Toplam</TableCell>
+                        <TableCell align="center"></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -43,11 +52,14 @@ export default function ShoppingCartPage() {
                             key={row.productId}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <TableCell component="th" scope="row">
+                            <TableCell component="th" scope="row" align="center" >
                                 <img src={`http://localhost:5267/images/${row.imageUrl}`} alt={row.name} style={{ height: "60px" }} />
                             </TableCell>
-                            <TableCell align="right">{row.price} ₺</TableCell>
-                            <TableCell align="right">
+                            <TableCell align="center">
+                                {row.name}
+                            </TableCell>
+                            <TableCell align="center">{currencyTRY.format(row.price)}</TableCell>
+                            <TableCell align="center">
                                 <Button loading={status.loading && status.id === "add" + row.productId} onClick={() => handleAddItem(row.productId, "add" + row.productId)}>
                                     <AddCircleOutline />
                                 </Button>
@@ -56,14 +68,15 @@ export default function ShoppingCartPage() {
                                     <RemoveCircleOutline />
                                 </Button>
                             </TableCell>
-                            <TableCell align="right">{(row.price * row.quantity).toFixed(2)} ₺</TableCell>
-                            <TableCell align="right">
+                            <TableCell align="center">{currencyTRY.format(row.price * row.quantity)}</TableCell>
+                            <TableCell align="center">
                                 <Button loading={status.loading && status.id === "del_all" + row.productId} onClick={() => handleDeleteItem(row.productId, "del_all" + row.productId, row.quantity)}>
                                     <RemoveCircleOutline />
                                 </Button>
                             </TableCell>
                         </TableRow>
                     ))}
+                    <CartSummary />
                 </TableBody>
             </Table>
         </TableContainer >

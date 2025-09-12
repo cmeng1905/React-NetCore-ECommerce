@@ -3,13 +3,18 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import type { IProduct } from "../../model/IProduct";
 import requests from "../../api/request";
-import { ArrowBack } from "@mui/icons-material";
+import { AddShoppingCart, ArrowBack } from "@mui/icons-material";
+import { useCartContext } from "../../context/CartContext";
+import { toast } from "react-toastify";
+import { currencyTRY } from "../../utils/formatCurrency";
 
 
 export default function ProductDetailsPage() {
     const { id } = useParams<{ id: string }>();
     const [product, setProduct] = useState<IProduct | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isAdded, setIsAdded] = useState(false);
+    const { cart, setCart } = useCartContext();
     useEffect(() => {
         id && requests.Catalog.details(parseInt(id))
             .then(data => setProduct(data))
@@ -25,9 +30,22 @@ export default function ProductDetailsPage() {
         );
     if (!product)
         return <h5>Product not found...</h5>
+
+    const item = cart?.cartItems.find(i => i.productId == product.id);
+    function handleAddItem(productId: number) {
+        setIsAdded(true);
+        requests.Cart.addItem(productId)
+            .then(cart => {
+                setCart(cart);
+                toast.success("Item added to cart");
+            })
+            .catch(() => toast.error("Error adding item to cart"))
+            .finally(() => setIsAdded(false));
+    }
+
     return (
         <>
-            <Button component={Link} to="/catalog" startIcon={<ArrowBack />} sx={{ textTransform: "none" }}>
+            <Button variant="outlined" component={Link} to="/catalog" startIcon={<ArrowBack />} sx={{ textTransform: "none" }}>
                 Catalog List
             </Button>
             <Grid container spacing={6}>
@@ -37,7 +55,7 @@ export default function ProductDetailsPage() {
                 <Grid size={{ xl: 9, lg: 9, md: 7, sm: 6, xs: 12 }}>
                     <Typography variant="h3">{product.name}</Typography>
                     <Divider sx={{ mb: 2 }} />
-                    <Typography variant="h4" color="secondary"> {product.price.toFixed(2)} ₺</Typography>
+                    <Typography variant="h4" color="secondary"> {currencyTRY.format(product.price)}</Typography>
                     <TableContainer>
                         <Table>
                             <TableBody>
@@ -56,6 +74,17 @@ export default function ProductDetailsPage() {
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    <Stack direction="row" sx={{ mt: 3 }} alignItems="center" spacing={2}>
+                        <Button variant="outlined" loadingPosition="start" startIcon={<AddShoppingCart />} loading={isAdded}
+                            onClick={() => handleAddItem(product.id)}>Add to Cart</Button>
+                        {
+                            item?.quantity! > 0 && (
+                                <Typography variant="body2" color="text.secondary">
+                                    Sepetinize {item?.quantity} adet ürün eklenmiştir.
+                                </Typography>
+                            )
+                        }
+                    </Stack>
                 </Grid>
             </Grid>
         </>
