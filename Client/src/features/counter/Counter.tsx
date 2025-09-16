@@ -1,6 +1,7 @@
 import { Button, ButtonGroup, Typography } from "@mui/material";
-import { decrement, increment, incrementByAmount, setInitialValue, useAppDispatch, useAppSelector } from "./counterSlice";
+import { decrement, increment, incrementByAmount, setInitialValue } from "./counterSlice";
 import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 
 export default function Counter() {
     // const count = useSelector((state: RootState) => state.counter.value);

@@ -8,18 +8,22 @@ import requests from "../../api/request";
 import { toast } from "react-toastify";
 import { useCartContext } from "../../context/CartContext";
 import { currencyTRY } from "../../utils/formatCurrency";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { setCart } from "../cart/CartSlice";
 interface Props {
     product: IProduct
 }
 export default function Product({ product }: Props) {
     const [loading, setLoading] = useState(false);
-    const { setCart } = useCartContext();
+    // const { setCart } = useCartContext();
+    const { cart } = useAppSelector(state => state.cart);
+    const dispatch = useAppDispatch();
     function handleAddItem(productId: number) {
         setLoading(true);
         requests.Cart.addItem(productId)
             .then((cart) => {
                 toast.success("Item added to cart");
-                setCart(cart);
+                dispatch(setCart(cart));
             })
             .catch((err) => {
                 toast.error("Error adding item to cart");

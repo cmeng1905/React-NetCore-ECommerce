@@ -7,6 +7,8 @@ import { AddShoppingCart, ArrowBack } from "@mui/icons-material";
 import { useCartContext } from "../../context/CartContext";
 import { toast } from "react-toastify";
 import { currencyTRY } from "../../utils/formatCurrency";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { setCart } from "../cart/CartSlice";
 
 
 export default function ProductDetailsPage() {
@@ -14,7 +16,9 @@ export default function ProductDetailsPage() {
     const [product, setProduct] = useState<IProduct | null>(null);
     const [loading, setLoading] = useState(true);
     const [isAdded, setIsAdded] = useState(false);
-    const { cart, setCart } = useCartContext();
+    // const { cart, setCart } = useCartContext();
+    const { cart } = useAppSelector(state => state.cart);
+    const dispatch = useAppDispatch();
     useEffect(() => {
         id && requests.Catalog.details(parseInt(id))
             .then(data => setProduct(data))
@@ -36,7 +40,7 @@ export default function ProductDetailsPage() {
         setIsAdded(true);
         requests.Cart.addItem(productId)
             .then(cart => {
-                setCart(cart);
+                dispatch(setCart(cart));
                 toast.success("Item added to cart");
             })
             .catch(() => toast.error("Error adding item to cart"))

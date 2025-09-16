@@ -6,15 +6,19 @@ import requests from "../../api/request";
 import { toast } from "react-toastify";
 import CartSummary from "./CartSummary";
 import { currencyTRY } from "../../utils/formatCurrency";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { setCart } from "./CartSlice";
 
 export default function ShoppingCartPage() {
-    const { cart, setCart } = useCartContext();
+    // const { cart, setCart } = useCartContext();
+    const { cart } = useAppSelector(state => state.cart);
+    const dispatch = useAppDispatch();
     const [status, setStatus] = useState({ loading: false, id: "" });
     function handleAddItem(productId: number, id: string) {
         setStatus({ loading: true, id: id });
         requests.Cart.addItem(productId)
             .then((cart) => {
-                setCart(cart);
+                dispatch(setCart(cart));
                 toast.success("Item added to cart");
             })
             .catch(() => toast.error("Error adding item to cart"))
@@ -24,7 +28,7 @@ export default function ShoppingCartPage() {
         setStatus({ loading: true, id: id });
         requests.Cart.deleteItem(productId, quantity)
             .then((cart) => {
-                setCart(cart);
+                dispatch(setCart(cart));
                 toast.success("Item removed from cart");
             })
             .catch(() => toast.error("Error removing item from cart"))
