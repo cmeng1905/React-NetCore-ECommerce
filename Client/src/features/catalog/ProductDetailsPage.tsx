@@ -8,16 +8,16 @@ import { useCartContext } from "../../context/CartContext";
 import { toast } from "react-toastify";
 import { currencyTRY } from "../../utils/formatCurrency";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { setCart } from "../cart/CartSlice";
+import { addItemToCart, setCart } from "../cart/CartSlice";
 
 
 export default function ProductDetailsPage() {
     const { id } = useParams<{ id: string }>();
     const [product, setProduct] = useState<IProduct | null>(null);
     const [loading, setLoading] = useState(true);
-    const [isAdded, setIsAdded] = useState(false);
+    // const [isAdded, setIsAdded] = useState(false);
     // const { cart, setCart } = useCartContext();
-    const { cart } = useAppSelector(state => state.cart);
+    const { cart, status } = useAppSelector(state => state.cart);
     const dispatch = useAppDispatch();
     useEffect(() => {
         id && requests.Catalog.details(parseInt(id))
@@ -36,16 +36,16 @@ export default function ProductDetailsPage() {
         return <h5>Product not found...</h5>
 
     const item = cart?.cartItems.find(i => i.productId == product.id);
-    function handleAddItem(productId: number) {
-        setIsAdded(true);
-        requests.Cart.addItem(productId)
-            .then(cart => {
-                dispatch(setCart(cart));
-                toast.success("Item added to cart");
-            })
-            .catch(() => toast.error("Error adding item to cart"))
-            .finally(() => setIsAdded(false));
-    }
+    // function handleAddItem(productId: number) {
+    //     setIsAdded(true);
+    //     requests.Cart.addItem(productId)
+    //         .then(cart => {
+    //             dispatch(setCart(cart));
+    //             toast.success("Item added to cart");
+    //         })
+    //         .catch(() => toast.error("Error adding item to cart"))
+    //         .finally(() => setIsAdded(false));
+    // }
 
     return (
         <>
@@ -79,8 +79,8 @@ export default function ProductDetailsPage() {
                         </Table>
                     </TableContainer>
                     <Stack direction="row" sx={{ mt: 3 }} alignItems="center" spacing={2}>
-                        <Button variant="outlined" loadingPosition="start" startIcon={<AddShoppingCart />} loading={isAdded}
-                            onClick={() => handleAddItem(product.id)}>Add to Cart</Button>
+                        <Button variant="outlined" loadingPosition="start" startIcon={<AddShoppingCart />} loading={status === "pendingAddItem" + product.id}
+                            onClick={() => dispatch(addItemToCart({ productId: product.id }))}>Add to Cart</Button>
                         {
                             item?.quantity! > 0 && (
                                 <Typography variant="body2" color="text.secondary">

@@ -9,28 +9,29 @@ import { toast } from "react-toastify";
 import { useCartContext } from "../../context/CartContext";
 import { currencyTRY } from "../../utils/formatCurrency";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
-import { setCart } from "../cart/CartSlice";
+import { addItemToCart, setCart } from "../cart/CartSlice";
 interface Props {
     product: IProduct
 }
 export default function Product({ product }: Props) {
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false);
     // const { setCart } = useCartContext();
-    const { cart } = useAppSelector(state => state.cart);
+    // const { cart } = useAppSelector(state => state.cart);
     const dispatch = useAppDispatch();
-    function handleAddItem(productId: number) {
-        setLoading(true);
-        requests.Cart.addItem(productId)
-            .then((cart) => {
-                toast.success("Item added to cart");
-                dispatch(setCart(cart));
-            })
-            .catch((err) => {
-                toast.error("Error adding item to cart");
-            }).finally(() => {
-                setLoading(false);
-            });
-    }
+    const { status } = useAppSelector(state => state.cart);
+    // function handleAddItem(productId: number) {
+    //     setLoading(true);
+    //     requests.Cart.addItem(productId)
+    //         .then((cart) => {
+    //             toast.success("Item added to cart");
+    //             dispatch(setCart(cart));
+    //         })
+    //         .catch((err) => {
+    //             toast.error("Error adding item to cart");
+    //         }).finally(() => {
+    //             setLoading(false);
+    //         });
+    // }
     return (
         <Card>
             <CardMedia component={Link} to={`/catalog/${product.id}`} sx={{ height: 140, backgroundSize: "contain" }} image={`http://localhost:5267/images/${product.imageUrl}`} />
@@ -43,7 +44,7 @@ export default function Product({ product }: Props) {
                 </Typography>
             </CardContent>
             <CardActions sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
-                <Button variant="outlined" size="small" startIcon={<AddShoppingCart />} color="success" onClick={() => handleAddItem(product.id)} loading={loading} loadingPosition="start">Add to cart</Button>
+                <Button variant="outlined" size="small" startIcon={<AddShoppingCart />} color="success" onClick={() => dispatch(addItemToCart({ productId: product.id }))} loading={status === "pendingAddItem" + product.id} loadingPosition="start">Add to cart</Button>
                 <Button component={Link} to={`/catalog/${product.id}`} variant="outlined" size="small" startIcon={<SearchIcon />} color="primary">View</Button>
             </CardActions>
         </Card>

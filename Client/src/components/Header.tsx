@@ -47,7 +47,7 @@ function Header() {
                 </Box>
                 <Box>
                     <IconButton component={Link} to="/cart" size="large" edge="start" color="inherit">
-                        <Badge badgeContent={cart?.cartItems.length} color="secondary">
+                        <Badge badgeContent={cart?.cartItems.reduce((partialSum, a) => partialSum + a.quantity, 0)} color="secondary">
                             <ShoppingCart />
                         </Badge>
                     </IconButton>
