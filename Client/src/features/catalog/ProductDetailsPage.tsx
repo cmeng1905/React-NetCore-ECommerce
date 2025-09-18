@@ -9,24 +9,27 @@ import { toast } from "react-toastify";
 import { currencyTRY } from "../../utils/formatCurrency";
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { addItemToCart, setCart } from "../cart/CartSlice";
+import { fetchProductById, selectProductById } from "./catalogSlice";
 
 
 export default function ProductDetailsPage() {
     const { id } = useParams<{ id: string }>();
-    const [product, setProduct] = useState<IProduct | null>(null);
-    const [loading, setLoading] = useState(true);
+    // const [product, setProduct] = useState<IProduct | null>(null);
+    // const [loading, setLoading] = useState(true);
     // const [isAdded, setIsAdded] = useState(false);
     // const { cart, setCart } = useCartContext();
     const { cart, status } = useAppSelector(state => state.cart);
+    const product = useAppSelector(state => selectProductById(state, Number(id)));
     const dispatch = useAppDispatch();
     useEffect(() => {
-        id && requests.Catalog.details(parseInt(id))
-            .then(data => setProduct(data))
-            .catch(error => console.log(error))
-            .finally(() => setLoading(false))
+        // id && requests.Catalog.details(parseInt(id))
+        //     .then(data => setProduct(data))
+        //     .catch(error => console.log(error))
+        //     .finally(() => setLoading(false))
+        !product && id && dispatch(fetchProductById(parseInt(id)));
     }, [id]);
 
-    if (loading)
+    if (status === "pendingFetchProductById")
         return (
             <Stack alignItems="center">
                 <CircularProgress />
