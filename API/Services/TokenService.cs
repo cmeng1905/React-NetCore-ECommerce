@@ -37,6 +37,8 @@ namespace API.Services
                 Subject=new ClaimsIdentity(claims),
                 Expires=DateTime.Now.AddDays(30),
                 SigningCredentials=new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature),
+                Issuer= "cmeng",
+                Audience="abc"
             };
             var token= tokenHandler.CreateToken(tokenSettings);
             return tokenHandler.WriteToken(token);
