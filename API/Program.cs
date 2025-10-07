@@ -1,4 +1,5 @@
 using API.Data;
+using API.Entity;
 using API.Middlewares;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +14,8 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlite(conStr);
 });
 builder.Services.AddCors();
+builder.Services.AddIdentity<AppUser,AppRole>().AddEntityFrameworkStores<DataContext>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -36,5 +39,5 @@ app.UseStaticFiles();
 app.UseAuthorization();
 
 app.MapControllers();
-
+SeedDatabase.Initialize(app);
 app.Run();
