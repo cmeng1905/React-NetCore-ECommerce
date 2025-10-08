@@ -10,7 +10,7 @@ import ServerError from "../errors/ServerError";
 import NotFound from "../errors/NotFound";
 import ShoppingCartPage from "../features/cart/ShoppingCartPage";
 import RegisterPage from "../features/account/RegisterPage";
-import LoginPage from "../features/account/loginPage";
+import LoginPage from "../features/account/LoginPage";
 
 export const router = createBrowserRouter([
     {

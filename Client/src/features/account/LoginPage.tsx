@@ -53,7 +53,7 @@ export default function LoginPage() {
                         helperText={errors.password?.message}
                     />
                     <Button loading={isSubmitting}
-                        disabled={!isValid}
+                        // disabled={!isValid}
                         type="submit" variant="contained"
                         fullWidth sx={{ mt: 1 }}>Login</Button>
                 </Box>
