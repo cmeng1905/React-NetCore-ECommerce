@@ -25,7 +25,7 @@ namespace API.Controllers
             var user = await _userManager.FindByNameAsync(model.Username);
             if (user == null)
             {
-                return BadRequest(new { message = "Username hatalı" });
+                return BadRequest(new { title = "Kullanıcı adı veya şifre hatalı" });
             }
             var result = await _userManager.CheckPasswordAsync(user, model.Password);
             if (result)
