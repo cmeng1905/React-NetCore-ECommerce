@@ -2,7 +2,8 @@ import { ShoppingCart } from "@mui/icons-material";
 import { AppBar, Badge, Box, Button, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import { Link, NavLink } from "react-router";
 import { useCartContext } from "../context/CartContext";
-import { useAppSelector } from "../hooks/hooks";
+import { useAppDispatch, useAppSelector } from "../hooks/hooks";
+import { logout } from "../features/account/accountSlice";
 
 const links = [
     { title: "Home", to: "/" },
@@ -30,6 +31,8 @@ const navStyles = {
 function Header() {
     // const { cart } = useCartContext();
     const { cart } = useAppSelector(state => state.cart);
+    const dispatch = useAppDispatch();
+    const { user } = useAppSelector(state => state.account);
     return (
         <AppBar position="static" sx={{ mb: 4 }}>
             <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -58,8 +61,15 @@ function Header() {
                             </Badge>
                         </IconButton>
                         {
-                            authLinks.map((link, index) =>
-                                <Button key={index} component={NavLink} to={link.to} sx={navStyles}>{link.title}</Button>
+                            user ? (
+                                <>
+                                    <Button sx={navStyles}>{user.name}</Button>
+                                    <Button onClick={() => dispatch(logout())} sx={navStyles}>Logout</Button>
+                                </>
+                            ) : (
+                                authLinks.map((link, index) =>
+                                    <Button key={index} component={NavLink} to={link.to} sx={navStyles}>{link.title}</Button>
+                                )
                             )
                         }
                     </Stack>
