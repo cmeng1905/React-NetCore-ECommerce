@@ -1,6 +1,7 @@
 ﻿using API.DTO;
 using API.Entity;
 using API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,7 @@ namespace API.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly TokenService _tokenService;
 
-        public AccountController(UserManager<AppUser> userManager,TokenService tokenService)
+        public AccountController(UserManager<AppUser> userManager, TokenService tokenService)
         {
             _userManager = userManager;
             _tokenService = tokenService;
@@ -30,7 +31,7 @@ namespace API.Controllers
             var result = await _userManager.CheckPasswordAsync(user, model.Password);
             if (result)
             {
-                return Ok(new UserDto{Name=user.Name!, Token = await _tokenService.GenerateToken(user) });
+                return Ok(new UserDto { Name = user.Name!, Token = await _tokenService.GenerateToken(user) });
             }
             else
             {
@@ -46,9 +47,9 @@ namespace API.Controllers
 
             var user = new AppUser
             {
-                Name=model.Name,
-                UserName=model.Username,
-                Email=model.Email
+                Name = model.Name,
+                UserName = model.Username,
+                Email = model.Email
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
@@ -57,6 +58,16 @@ namespace API.Controllers
                 return StatusCode(201);
             }
             return BadRequest(result.Errors);
+        }
+
+        [Authorize]
+        [HttpGet("getuser")]
+        public async Task<ActionResult<UserDto>> GetUser()
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity?.Name!);
+            if (user == null)
+                return BadRequest(new { title = "Kullanıcı adı ya da parola hatalı" });
+            return new UserDto { Name = user.Name!, Token = await _tokenService.GenerateToken(user) };
         }
     }
 }
