@@ -9,13 +9,14 @@ import { toast } from 'react-toastify';
 export default function RegisterPage() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<IRegisterModel>({
+    const { register, handleSubmit, setError, reset, formState: { errors, isSubmitting } } = useForm<IRegisterModel>({
         defaultValues: {
             Name: '',
             UserName: '',
             Email: '',
             Password: ''
-        }
+        },
+        mode: "onTouched"
     });
     async function submitForm(data: FieldValues) {
         await dispatch(registerUser(data)).then((res) => {
@@ -28,6 +29,13 @@ export default function RegisterPage() {
                 reset();
             }
         });
+        // .catch(result => {
+        //     const { data: errors } = result;
+        //     errors.forEach((error: any) => {
+        //         if (error.code == "DuplicateUserName")
+        //             setError("UserName", { type: "manual", message: error.message });
+        //     });
+        // });
 
     }
     return (
@@ -60,7 +68,7 @@ export default function RegisterPage() {
                             }
                         })}
                         label="Enter username"
-                        fullWidth required autoFocus sx={{ mb: 2 }} size="small"
+                        fullWidth required sx={{ mb: 2 }} size="small"
                         error={!!errors.UserName}
                         helperText={errors.UserName?.message}
                     />
@@ -77,7 +85,7 @@ export default function RegisterPage() {
                             }
                         })}
                         label="Enter email"
-                        fullWidth required autoFocus sx={{ mb: 2 }} size="small"
+                        fullWidth required sx={{ mb: 2 }} size="small"
                         error={!!errors.Email}
                         helperText={errors.Email?.message}
                     />
