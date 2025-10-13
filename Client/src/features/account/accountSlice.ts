@@ -47,6 +47,18 @@ export const getUser = createAsyncThunk<IUser>(
     }
 );
 
+export const registerUser = createAsyncThunk<IUser, FieldValues>(
+    "account/register",
+    async (data, { rejectWithValue }) => {
+        try {
+            return await requests.Account.register(data);
+        }
+        catch (error: any) {
+            return rejectWithValue({ error: error.data });
+        }
+    }
+);
+
 export const accountSlice = createSlice(
     {
         name: "account",

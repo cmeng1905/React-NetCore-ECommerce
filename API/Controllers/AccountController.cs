@@ -45,7 +45,11 @@ namespace API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = new AppUser
+            var user = await _userManager.FindByNameAsync(model.Username);
+            if(user!=null)
+                return BadRequest(new { title = "Kullanıcı adı zaten kayıtlı" });   
+
+            user = new AppUser
             {
                 Name = model.Name,
                 UserName = model.Username,
