@@ -5,34 +5,42 @@ import { toast, ToastContainer } from "react-toastify";
 import requests from "../api/request";
 import { useCartContext } from "../context/CartContext";
 import { useAppDispatch } from "../hooks/hooks";
-import { setCart } from "../features/cart/CartSlice";
-import { logout, setUser } from "../features/account/accountSlice";
+import { getCart, setCart } from "../features/cart/CartSlice";
+import { getUser, logout, setUser } from "../features/account/accountSlice";
 import Header from "./Header";
 
 function App() {
   // const { setCart } = useCartContext();
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
+  const initApp = async () => {
+    //getCart
+    //getUser
+
+    // requests.Account.getUser().then((user) => {
+    //   dispatch(setUser(user));
+    // }).catch((error) => {
+    //   dispatch(logout());
+    // });
+
+    // requests.Cart.get()
+    //   .then((cart) => {
+    //     // setCart(cart);
+    //     dispatch(setCart(cart));
+    //   })
+    //   .catch((err) => {
+    //     toast.error("Sepet bilgisine ulaşılamadı.");
+    //   }).finally(() => {
+    //     setLoading(false);
+    //   });
+    await dispatch(getUser());
+    await dispatch(getCart());
+  }
+
   useEffect(() => {
-
-    dispatch(setUser(JSON.parse(localStorage.getItem("user")!)));
-
-    requests.Account.getUser().then((user) => {
-      dispatch(setUser(user));
-    }).catch((error) => {
-      dispatch(logout());
+    initApp().then(() => {
+      setLoading(false);
     });
-
-    requests.Cart.get()
-      .then((cart) => {
-        // setCart(cart);
-        dispatch(setCart(cart));
-      })
-      .catch((err) => {
-        toast.error("Sepet bilgisine ulaşılamadı.");
-      }).finally(() => {
-        setLoading(false);
-      });
   }, []);
 
   if (loading)
