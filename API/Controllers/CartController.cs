@@ -20,13 +20,13 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<CartDTO>> GetCart()
         {
-            return CartToDto(await GetOrCreate());
+            return CartToDto(await GetOrCreate(GetCustomerId()));
         }
 
         [HttpPost]
         public async Task<IActionResult> AddItemToCart(int productId, int quantity)
         {
-            var cart = await GetOrCreate();
+            var cart = await GetOrCreate(GetCustomerId());
             var product = await _context.Products.FirstOrDefaultAsync(s => s.Id == productId);
             if (product == null)
                 return NotFound("The product is not in the database");
@@ -43,7 +43,7 @@ namespace API.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteItemFromCart(int productId, int quantity)
         {
-            var cart = await GetOrCreate();
+            var cart = await GetOrCreate(GetCustomerId());
 
             cart.DeleteItem(productId, quantity);
             var result = await _context.SaveChangesAsync() > 0;
@@ -54,19 +54,27 @@ namespace API.Controllers
                 Title = "The product can not be removed from cart"
             });
         }
-
-        private async Task<Cart> GetOrCreate()
+        private string GetCustomerId()
         {
-            var cart = await _context.Carts.Include(s => s.CartItems).ThenInclude(s => s.Product).FirstOrDefaultAsync(s => s.CustomerId == Request.Cookies["customerId"]);
+            return User.Identity?.Name ?? Request.Cookies["customerId"]!;
+        }
+        private async Task<Cart> GetOrCreate(string custId)
+        {
+            var cart = await _context.Carts.Include(s => s.CartItems).ThenInclude(s => s.Product).FirstOrDefaultAsync(s => s.CustomerId == custId);
             if (cart == null)
             {
-                var customerId = Guid.NewGuid().ToString();
-                var cookieOptions = new CookieOptions
+                var customerId = User.Identity?.Name;
+                if (string.IsNullOrEmpty(customerId))
                 {
-                    Expires = DateTime.Now.AddMonths(1),
-                    IsEssential = true
-                };
-                Response.Cookies.Append("customerId", customerId, cookieOptions);
+                    customerId = Guid.NewGuid().ToString();
+                    var cookieOptions = new CookieOptions
+                    {
+                        Expires = DateTime.Now.AddMonths(1),
+                        IsEssential = true
+                    };
+                    Response.Cookies.Append("customerId", customerId, cookieOptions);
+                }
+
                 cart = new Cart { CustomerId = customerId };
                 _context.Carts.Add(cart);
                 await _context.SaveChangesAsync();

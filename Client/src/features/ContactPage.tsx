@@ -13,7 +13,7 @@ export default function ContactPage() {
 
             <Grid container spacing={6}>
                 {/* Contact Information */}
-                <Grid item size={{ xs: 12, md: 5 }}>
+                <Grid size={{ xs: 12, md: 5 }}>
                     <Typography variant="h5" component="h2" gutterBottom sx={{ mb: 3 }}>
                         İletişim Bilgileri
                     </Typography>
@@ -36,22 +36,22 @@ export default function ContactPage() {
                 </Grid>
 
                 {/* Contact Form */}
-                <Grid item size={{ xs: 12, md: 7 }}>
+                <Grid size={{ xs: 12, md: 7 }}>
                     <Typography variant="h5" component="h2" gutterBottom sx={{ mb: 3 }}>
                         Mesaj Gönderin
                     </Typography>
                     <Box component="form" noValidate autoComplete="off" onSubmit={(e) => e.preventDefault()}>
                         <Grid container spacing={2}>
-                            <Grid item size={{ xs: 12, sm: 6 }}>
+                            <Grid size={{ xs: 12, sm: 6 }}>
                                 <TextField required fullWidth id="name" label="Adınız" name="name" />
                             </Grid>
-                            <Grid item size={{ xs: 12, sm: 6 }}>
+                            <Grid size={{ xs: 12, sm: 6 }}>
                                 <TextField required fullWidth id="email" label="E-posta Adresiniz" name="email" />
                             </Grid>
-                            <Grid item size={{ xs: 12 }}>
+                            <Grid size={{ xs: 12 }}>
                                 <TextField required fullWidth multiline rows={4} id="message" label="Mesajınız" name="message" />
                             </Grid>
-                            <Grid item size={{ xs: 12 }}>
+                            <Grid size={{ xs: 12 }}>
                                 <Button type="submit" variant="contained" size="large" fullWidth>Gönder</Button>
                             </Grid>
                         </Grid>

@@ -17,6 +17,7 @@
     "@mui/material": "^7.3.2",
     "@reduxjs/toolkit": "^2.9.0",
     "axios": "^1.11.0",
+    "js-cookie": "^3.0.5",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.64.0",
@@ -28,8 +29,10 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
+    "@types/js-cookie": "^3.0.6",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
+    "@types/react-slick": "^0.23.13",
     "@vitejs/plugin-react": "^5.0.0",
     "eslint": "^9.33.0",
     "eslint-plugin-react-hooks": "^5.2.0",

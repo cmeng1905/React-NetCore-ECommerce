@@ -5,12 +5,13 @@ import type { ILoginModel } from "../../model/ILoginModel";
 import { useAppDispatch } from "../../hooks/hooks";
 import { loginUser } from "./accountSlice";
 import { useNavigate } from "react-router";
+import { getCart } from "../cart/CartSlice";
 
 export default function LoginPage() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    const { register, handleSubmit, formState: { errors, isSubmitting, isValid } } = useForm<ILoginModel>({
+    const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<ILoginModel>({
         defaultValues: {
             username: '',
             password: ''
@@ -22,6 +23,7 @@ export default function LoginPage() {
         const resultAction = await dispatch(loginUser(data));
         if (loginUser.fulfilled.match(resultAction)) {
             navigate("/catalog");
+            dispatch(getCart());
         }
     }
     return (

@@ -1,9 +1,9 @@
 import { ShoppingCart } from "@mui/icons-material";
 import { AppBar, Badge, Box, Button, IconButton, Stack, Toolbar, Typography } from "@mui/material";
 import { Link, NavLink } from "react-router";
-import { useCartContext } from "../context/CartContext";
 import { useAppDispatch, useAppSelector } from "../hooks/hooks";
 import { logout } from "../features/account/accountSlice";
+import { removeCart } from "../features/cart/CartSlice";
 
 const links = [
     { title: "Home", to: "/" },
@@ -33,6 +33,7 @@ function Header() {
     const { cart } = useAppSelector(state => state.cart);
     const dispatch = useAppDispatch();
     const { user } = useAppSelector(state => state.account);
+
     return (
         <AppBar position="static" sx={{ mb: 4 }}>
             <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -64,7 +65,7 @@ function Header() {
                             user ? (
                                 <>
                                     <Button sx={navStyles}>{user.name}</Button>
-                                    <Button onClick={() => dispatch(logout())} sx={navStyles}>Logout</Button>
+                                    <Button onClick={() => { dispatch(logout()); dispatch(removeCart()) }} sx={navStyles}>Logout</Button>
                                 </>
                             ) : (
                                 authLinks.map((link, index) =>

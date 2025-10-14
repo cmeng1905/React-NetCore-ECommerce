@@ -3,6 +3,7 @@ import type { ICart } from "../../model/ICart";
 import requests from "../../api/request";
 import { act } from "react";
 import { Try } from "@mui/icons-material";
+import { removeCookie } from "../../utils/cookieManage";
 
 interface CartState {
     cart: ICart | null;
@@ -58,6 +59,10 @@ export const cartSlice = createSlice({
     reducers: {
         setCart: (state, action) => {
             state.cart = action.payload;
+        },
+        removeCart: (state) => {
+            state.cart = null;
+            removeCookie("customerId");
         }
     },
     extraReducers: (builder) => {
@@ -91,4 +96,4 @@ export const cartSlice = createSlice({
     }
 });
 
-export const { setCart } = cartSlice.actions;
+export const { setCart, removeCart } = cartSlice.actions;
