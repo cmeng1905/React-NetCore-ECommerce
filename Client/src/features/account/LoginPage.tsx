@@ -4,12 +4,13 @@ import { useForm, type FieldValues } from "react-hook-form"
 import type { ILoginModel } from "../../model/ILoginModel";
 import { useAppDispatch } from "../../hooks/hooks";
 import { loginUser } from "./accountSlice";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { getCart } from "../cart/CartSlice";
 
 export default function LoginPage() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<ILoginModel>({
         defaultValues: {
@@ -22,7 +23,7 @@ export default function LoginPage() {
         // await requests.Account.login(data);
         const resultAction = await dispatch(loginUser(data));
         if (loginUser.fulfilled.match(resultAction)) {
-            navigate("/catalog");
+            navigate(location.state?.from || "/catalog");
             dispatch(getCart());
         }
     }

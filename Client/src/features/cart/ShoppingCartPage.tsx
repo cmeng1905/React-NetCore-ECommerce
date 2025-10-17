@@ -1,4 +1,4 @@
-import { Alert, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Alert, Box, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
 import { AddCircleOutline, Delete, RemoveCircleOutline } from "@mui/icons-material";
 import { useState } from "react";
 import requests from "../../api/request";
@@ -39,53 +39,60 @@ export default function ShoppingCartPage() {
         return (<Alert severity="error">Cart is empty</Alert>)
 
     return (
-        <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell align="center"></TableCell>
-                        <TableCell align="center"></TableCell>
-                        <TableCell align="center">Fiyat</TableCell>
-                        <TableCell align="center">Adet</TableCell>
-                        <TableCell align="center">Toplam</TableCell>
-                        <TableCell align="center"></TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {cart.cartItems.map((row) => (
-                        <TableRow
-                            key={row.productId}
-                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                            <TableCell component="th" scope="row" align="center" >
-                                <Link to={`/catalog/${row.productId}`}>
-                                    <img src={`http://localhost:5267/images/${row.imageUrl}`} alt={row.name} style={{ height: "60px" }} />
-                                </Link>
-                            </TableCell>
-                            <TableCell align="center">
-                                {row.name}
-                            </TableCell>
-                            <TableCell align="center">{currencyTRY.format(row.price)}</TableCell>
-                            <TableCell align="center">
-                                <Button loading={status == "pendingAddItem" + row.productId} onClick={() => dispatch(addItemToCart({ productId: row.productId }))}>
-                                    <AddCircleOutline />
-                                </Button>
-                                {row.quantity}
-                                <Button loading={status == "pendingDeleteItem" + row.productId + "single"} onClick={() => dispatch(deleteItemFromCart({ productId: row.productId, quantity: 1, key: "single" }))}>
-                                    <RemoveCircleOutline />
-                                </Button>
-                            </TableCell>
-                            <TableCell align="center">{currencyTRY.format(row.price * row.quantity)}</TableCell>
-                            <TableCell align="center">
-                                <Button loading={status == "pendingDeleteItem" + row.productId + "all"} onClick={() => dispatch(deleteItemFromCart({ productId: row.productId, quantity: row.quantity, key: "all" }))}>
-                                    <Delete />
-                                </Button>
-                            </TableCell>
+        <>
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <TableCell align="center"></TableCell>
+                            <TableCell align="center"></TableCell>
+                            <TableCell align="center">Fiyat</TableCell>
+                            <TableCell align="center">Adet</TableCell>
+                            <TableCell align="center">Toplam</TableCell>
+                            <TableCell align="center"></TableCell>
                         </TableRow>
-                    ))}
-                    <CartSummary />
-                </TableBody>
-            </Table>
-        </TableContainer >
+                    </TableHead>
+                    <TableBody>
+                        {cart.cartItems.map((row) => (
+                            <TableRow
+                                key={row.productId}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >
+                                <TableCell component="th" scope="row" align="center" >
+                                    <Link to={`/catalog/${row.productId}`}>
+                                        <img src={`http://localhost:5267/images/${row.imageUrl}`} alt={row.name} style={{ height: "60px" }} />
+                                    </Link>
+                                </TableCell>
+                                <TableCell align="center">
+                                    {row.name}
+                                </TableCell>
+                                <TableCell align="center">{currencyTRY.format(row.price)}</TableCell>
+                                <TableCell align="center">
+                                    <Button loading={status == "pendingAddItem" + row.productId} onClick={() => dispatch(addItemToCart({ productId: row.productId }))}>
+                                        <AddCircleOutline />
+                                    </Button>
+                                    {row.quantity}
+                                    <Button loading={status == "pendingDeleteItem" + row.productId + "single"} onClick={() => dispatch(deleteItemFromCart({ productId: row.productId, quantity: 1, key: "single" }))}>
+                                        <RemoveCircleOutline />
+                                    </Button>
+                                </TableCell>
+                                <TableCell align="center">{currencyTRY.format(row.price * row.quantity)}</TableCell>
+                                <TableCell align="center">
+                                    <Button loading={status == "pendingDeleteItem" + row.productId + "all"} onClick={() => dispatch(deleteItemFromCart({ productId: row.productId, quantity: row.quantity, key: "all" }))}>
+                                        <Delete />
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                        <CartSummary />
+                    </TableBody>
+                </Table>
+            </TableContainer >
+            <Box display="flex" justifyContent="center" sx={{ mt: 2 }}>
+                <Button component={Link} to="/checkout" variant="contained" color="primary" >
+                    Ödeme Yap
+                </Button>
+            </Box>
+        </>
     )
 }
