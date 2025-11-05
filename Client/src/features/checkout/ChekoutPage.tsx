@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Paper, Step, StepLabel, Stepper } from '@mui/material'
+import { Box, Button, Grid, Paper, Stack, Step, StepLabel, Stepper, Typography } from '@mui/material'
 import React, { act, use, useState } from 'react'
 import Info from './Info'
 import AddressForm from './AddressForm'
@@ -57,9 +57,17 @@ export default function ChekoutPage() {
                         </Box>
                         <Box>
                             {activeStep == steps.length ? (
-                                <>
-                                    <h2>Sipariş tamamlandı.</h2>
-                                </>
+                                <Stack spacing={2}>
+                                    <Typography variant='h5'>Siparişiniz alınmıştır.</Typography>
+                                    <Typography variant='body1' sx={{ color: "text.secondary" }}>
+                                        Sipariş numaranız <strong>#1234.</strong>
+                                        Siparişiniz onaylandığında size bir e-posta göndereceğiz.
+                                    </Typography>
+                                    <Button variant='contained' sx={{ alignSelf: "start", width: { xs: "100%", sm: "auto" } }} onClick={() => {
+                                        setActiveStep(0);
+                                        methods.reset();
+                                    }}>Siparişleri Listele</Button>
+                                </Stack>
                             ) : (
                                 <>
                                     <form onSubmit={methods.handleSubmit(nextStep)}>
