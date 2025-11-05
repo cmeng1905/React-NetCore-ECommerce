@@ -12,29 +12,28 @@ namespace API.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class OrderController : ControllerBase
+    public class OrdersController : ControllerBase
     {
         private readonly DataContext _context;
-        public OrderController(DataContext context)
+        public OrdersController(DataContext context)
         {
             _context = context;
         }
-
-        [HttpGet("GetOrders")]
+        [HttpGet]
         public async Task<ActionResult<List<OrderDto>>> GetOrders()
         {
             return await _context.Orders.Include(s => s.OrderItems)
                 .Where(s => s.CustomerId == User.Identity!.Name).OrderToDto().ToListAsync();
         }
 
-        [HttpGet("{id}", Name = "GetOrder")]
+        [HttpGet("{id}")]
         public async Task<ActionResult<OrderDto?>> GetOrder(int id)
         {
             return await _context.Orders.Include(s => s.OrderItems).OrderToDto()
                 .FirstOrDefaultAsync(s => s.CustomerId == User.Identity!.Name && s.Id == id);
         }
 
-        [HttpPost("CreateOrder")]
+        [HttpPost]
         public async Task<ActionResult<Order>> CreateOrder(CreateOrderDto orderDto)
         {
             var cart = await _context.Carts.Include(s => s.CartItems)
@@ -79,9 +78,9 @@ namespace API.Controllers
             var deliveryFree = 0;
             var order = new Order
             {
-                OrderItems=items,
-                CustomerId=User.Identity!.Name,
-                FirstName=orderDto.FirstName,
+                OrderItems = items,
+                CustomerId = User.Identity!.Name,
+                FirstName = orderDto.FirstName,
                 LastName = orderDto.LastName,
                 Phone = orderDto.Phone,
                 City = orderDto.City,
@@ -94,12 +93,12 @@ namespace API.Controllers
 
             _context.Orders.Add(order);
             _context.Carts.Remove(cart);
-            var result=await _context.SaveChangesAsync()>0;
-            if(result)
-                return CreatedAtRoute(nameof(GetOrder), new {id=order.Id});
+            var result = await _context.SaveChangesAsync() > 0;
+            if (result)
+                return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order.Id);
             return BadRequest(new ProblemDetails
             {
-                Title="Problem getting order"
+                Title = "Problem getting order"
             });
         }
     }

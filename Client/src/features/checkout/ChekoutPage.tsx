@@ -6,6 +6,10 @@ import PaymentForm from './PaymentForm'
 import Review from './Review'
 import { FormProvider, useForm, type FieldValues } from 'react-hook-form'
 import { ChevronLeft, ChevronLeftRounded, ChevronRightRounded } from '@mui/icons-material'
+import requests from '../../api/request'
+import { useAppDispatch, useAppSelector } from '../../hooks/hooks'
+import { removeCart, setCart } from '../cart/CartSlice'
+import { useNavigate } from 'react-router'
 
 const steps = ["Teslimat Bilgileri", "Ödeme Bilgileri", "Sipariş Özeti"];
 function getStepContent(step: number) {
@@ -24,7 +28,26 @@ function getStepContent(step: number) {
 export default function ChekoutPage() {
     const [activeStep, setActiveStep] = useState(0);
     const methods = useForm();
-    function nextStep(data: FieldValues) {
+    const [orderId, setOrderId] = useState<number | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const dispatch = useAppDispatch();
+    const { cart } = useAppSelector(state => state.cart);
+
+    async function nextStep(data: FieldValues) {
+        if (activeStep === 2) {
+            setLoading(true);
+            try {
+                const response = await requests.Order.createOrder(data);
+                setOrderId(response);
+                dispatch(removeCart());
+            } catch (error) {
+                console.error(error);
+                setError("Sipariş oluşturulurken bir hata oluştu.");
+            } finally {
+                setLoading(false);
+            }
+        }
         setActiveStep(activeStep + 1);
     }
     function backStep() {
@@ -34,14 +57,19 @@ export default function ChekoutPage() {
         <FormProvider {...methods}>
             <Paper>
                 <Grid container sx={{ p: 4 }}>
-                    <Grid size={4} sx={{
-                        borderRight: "1px solid #ccc",
-                        p: 3,
-                        borderColor: "divider"
-                    }}>
-                        <Info />
-                    </Grid>
-                    <Grid size={8} sx={{ p: 3 }}>
+                    {
+                        activeStep !== steps.length &&
+                        (
+                            <Grid size={4} sx={{
+                                borderRight: "1px solid #ccc",
+                                p: 3,
+                                borderColor: "divider"
+                            }}>
+                                <Info />
+                            </Grid>
+                        )
+                    }
+                    <Grid size={activeStep !== steps.length ? 8 : 12} sx={{ p: 3 }}>
                         <Box>
                             <Stepper activeStep={activeStep} sx={{ height: 40, mb: 4 }}>
                                 {
@@ -57,17 +85,24 @@ export default function ChekoutPage() {
                         </Box>
                         <Box>
                             {activeStep == steps.length ? (
-                                <Stack spacing={2}>
-                                    <Typography variant='h5'>Siparişiniz alınmıştır.</Typography>
-                                    <Typography variant='body1' sx={{ color: "text.secondary" }}>
-                                        Sipariş numaranız <strong>#1234.</strong>
-                                        Siparişiniz onaylandığında size bir e-posta göndereceğiz.
-                                    </Typography>
-                                    <Button variant='contained' sx={{ alignSelf: "start", width: { xs: "100%", sm: "auto" } }} onClick={() => {
-                                        setActiveStep(0);
-                                        methods.reset();
-                                    }}>Siparişleri Listele</Button>
-                                </Stack>
+                                !error ? (
+                                    <Stack spacing={2}>
+                                        <Typography variant='h5'>Siparişiniz alınmıştır.</Typography>
+                                        <Typography variant='body1' sx={{ color: "text.secondary" }}>Sipariş numaranız <strong>{orderId}.</strong>
+                                            Siparişiniz onaylandığında size bir e-posta göndereceğiz.
+                                        </Typography>
+                                        <Button variant='contained' sx={{ alignSelf: "start", width: { xs: "100%", sm: "auto" } }}>Siparişleri Listele</Button>
+                                    </Stack>
+                                ) : (
+                                    <Stack spacing={2}>
+                                        <Typography variant='h5'>Sipariş oluşturulamadı.({error})</Typography>
+                                        <Typography variant='body1' sx={{ color: "text.secondary" }}>{error}</Typography>
+                                        <Button variant='contained' sx={{ alignSelf: "start", width: { xs: "100%", sm: "auto" } }} onClick={() => {
+                                            setActiveStep(0);
+                                            methods.reset();
+                                        }}>Tekrar Dene</Button>
+                                    </Stack>
+                                )
                             ) : (
                                 <>
                                     <form onSubmit={methods.handleSubmit(nextStep)}>
@@ -81,8 +116,10 @@ export default function ChekoutPage() {
                                                     Geri
                                                 </Button>
                                             }
-                                            <Button type='submit' startIcon={<ChevronRightRounded />} variant='contained'>
-                                                İleri
+                                            <Button loading={loading} type='submit' startIcon={<ChevronRightRounded />} variant='contained'>
+                                                {
+                                                    activeStep == 2 ? "Siparişi Tamamla" : "İleri"
+                                                }
                                             </Button>
                                         </Box>
                                     </form>
